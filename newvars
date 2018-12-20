@@ -1,0 +1,1 @@
+doupdateparticles [0..1] if set to 0 stops updating & rendering particles at all
