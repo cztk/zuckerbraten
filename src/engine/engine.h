@@ -30,6 +30,7 @@ extern bool inbetweenframes, renderedframe;
 extern SDL_Window *screen;
 extern int screenw, screenh;
 extern int zpass;
+extern int doupdateparticles;
 
 extern vector<int> entgroup;
 

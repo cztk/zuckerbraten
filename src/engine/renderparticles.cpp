@@ -957,6 +957,7 @@ void debugparticles()
 
 void renderparticles(bool mainpass)
 {
+    if(0 == doupdateparticles) return;
     canstep = mainpass;
     //want to debug BEFORE the lastpass render (that would delete particles)
     if(dbgparts && mainpass) loopi(sizeof(parts)/sizeof(parts[0])) parts[i]->debuginfo();
