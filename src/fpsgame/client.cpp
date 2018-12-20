@@ -645,6 +645,9 @@ namespace game
             }
             case EDIT_MAT:
             case EDIT_FACE:
+            #if PROTOCOL_VERSION < 260
+            case EDIT_TEX:
+            #endif
             {
                 addmsg(N_EDITF + op, "ri9i6",
                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
@@ -652,6 +655,7 @@ namespace game
                    arg1, arg2);
                 break;
             }
+            #if PROTOCOL_VERSION >= 260
             case EDIT_TEX:
             {
                 int tex1 = shouldpacktex(arg1);
@@ -667,8 +671,15 @@ namespace game
                 }
                 break;
             }
+            #endif
             case EDIT_REPLACE:
             {
+                #if PROTOCOL_VERSION < 260
+                addmsg(N_EDITF + op, "ri9i7",
+                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
+                    sel.cx, sel.cxs, sel.cy, sel.cys, sel.corner,
+                    arg1, arg2, arg3);
+                #else
                 int tex1 = shouldpacktex(arg1), tex2 = shouldpacktex(arg2);
                 if(addmsg(N_EDITF + op, "ri9i7",
                     sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
@@ -681,6 +692,7 @@ namespace game
                     if(tex2) packvslot(messages, arg2);
                     *(ushort *)&messages[offset-2] = lilswap(ushort(messages.length() - offset));
                 }
+                #endif
                 break;
             }
             case EDIT_REMIP:
@@ -688,6 +700,7 @@ namespace game
                 addmsg(N_EDITF + op, "r");
                 break;
             }
+            #if PROTOCOL_VERSION >= 260
             case EDIT_VSLOT:
             {
                 if(addmsg(N_EDITF + op, "ri9i6",
@@ -714,6 +727,7 @@ namespace game
                 }
                 break;
             }
+            #endif
         }
     }
 
@@ -1610,6 +1624,7 @@ namespace game
                 if(d) unpackeditinfo(d->edit, q.buf, q.maxlen, unpacklen);
                 break;
             }
+            #if PROTOCOL_VERSION >= 260
             case N_UNDO:
             case N_REDO:
             {
@@ -1619,7 +1634,7 @@ namespace game
                 if(d) unpackundo(q.buf, q.maxlen, unpacklen);
                 break;
             }
-
+            #endif
             case N_EDITF:              // coop editing messages
             case N_EDITT:
             case N_EDITM:
@@ -1629,7 +1644,9 @@ namespace game
             case N_ROTATE:
             case N_REPLACE:
             case N_DELCUBE:
+            #if PROTOCOL_VERSION >= 260
             case N_EDITVSLOT:
+            #endif
             {
                 if(!d) return;
                 selinfo sel;
@@ -1643,6 +1660,9 @@ namespace game
                     case N_EDITF: { int dir = getint(p), mode = getint(p); if(sel.validate()) mpeditface(dir, mode, sel, false); break; }
                     case N_EDITT:
                     {
+                        #if PROTOCOL_VERSION < 260
+                        int tex = getint(p), allfaces = getint(p); if(sel.validate()) mpedittex(tex, allfaces, sel, false);
+                        #else
                         int tex = getint(p),
                             allfaces = getint(p);
                         if(p.remaining() < 2) return;
@@ -1650,6 +1670,7 @@ namespace game
                         if(p.remaining() < extra) return;
                         ucharbuf ebuf = p.subbuf(extra);
                         if(sel.validate()) mpedittex(tex, allfaces, sel, ebuf);
+                        #endif
                         break;
                     }
                     case N_EDITM: { int mat = getint(p), filter = getint(p); if(sel.validate()) mpeditmat(mat, filter, sel, false); break; }
@@ -1659,6 +1680,9 @@ namespace game
                     case N_ROTATE: { int dir = getint(p); if(sel.validate()) mprotate(dir, sel, false); break; }
                     case N_REPLACE:
                     {
+                        #if PROTOCOL_VERSION < 260
+                        int tex = getint(p), newtex = getint(p), insel = getint(p); if(sel.validate()) mpreplacetex(tex, newtex, insel>0, sel, false);
+                        #else
                         int oldtex = getint(p),
                             newtex = getint(p),
                             insel = getint(p);
@@ -1667,9 +1691,11 @@ namespace game
                         if(p.remaining() < extra) return;
                         ucharbuf ebuf = p.subbuf(extra);
                         if(sel.validate()) mpreplacetex(oldtex, newtex, insel>0, sel, ebuf);
+                        #endif
                         break;
                     }
                     case N_DELCUBE: if(sel.validate()) mpdelcube(sel, false); break;
+                    #if PROTOCOL_VERSION >= 260
                     case N_EDITVSLOT:
                     {
                         int delta = getint(p),
@@ -1681,6 +1707,7 @@ namespace game
                         if(sel.validate()) mpeditvslot(delta, allfaces, sel, ebuf);
                         break;
                     }
+                    #endif
                 }
                 break;
             }

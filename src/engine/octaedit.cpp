@@ -760,6 +760,9 @@ VARP(nompedit, 0, 1, 1);
 
 void makeundo(selinfo &s)
 {
+    #if PROTOCOL_VERSION < 260
+    if(nompedit && multiplayer(false)) return;
+    #endif
     undoblock *u = newundocube(s);
     if(u) addundo(u);
 }
@@ -782,7 +785,11 @@ static int countblock(block3 *b) { return countblock(b->c(), b->size()); }
 
 void swapundo(undolist &a, undolist &b, int op)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     if(a.empty()) { conoutf(CON_WARN, "nothing more to %s", op == EDIT_REDO ? "redo" : "undo"); return; }
     int ts = a.last->timestamp;
     if(multiplayer(false))
@@ -2171,7 +2178,11 @@ bool mpeditvslot(int delta, int allfaces, selinfo &sel, ucharbuf &buf)
 
 void vdelta(char *body)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     usevdelta++;
     execute(body);
     usevdelta--;
@@ -2180,7 +2191,11 @@ COMMAND(vdelta, "s");
 
 void vrotate(int *n)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_ROTATION;
     ds.rotation = usevdelta ? *n : clamp(*n, 0, 5);
@@ -2190,7 +2205,11 @@ COMMAND(vrotate, "i");
 
 void voffset(int *x, int *y)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_OFFSET;
     ds.offset = usevdelta ? ivec2(*x, *y) : ivec2(*x, *y).max(0);
@@ -2200,7 +2219,11 @@ COMMAND(voffset, "ii");
 
 void vscroll(float *s, float *t)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_SCROLL;
     ds.scroll = vec2(*s, *t).div(1000);
@@ -2210,7 +2233,11 @@ COMMAND(vscroll, "ff");
 
 void vscale(float *scale)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_SCALE;
     ds.scale = *scale <= 0 ? 1 : (usevdelta ? *scale : clamp(*scale, 1/8.0f, 8.0f));
@@ -2220,7 +2247,11 @@ COMMAND(vscale, "f");
 
 void vlayer(int *n)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_LAYER;
     if(vslots.inrange(*n))
@@ -2235,7 +2266,11 @@ COMMAND(vlayer, "i");
 
 void valpha(float *front, float *back)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_ALPHA;
     ds.alphafront = clamp(*front, 0.0f, 1.0f);
@@ -2246,7 +2281,11 @@ COMMAND(valpha, "ff");
 
 void vcolor(float *r, float *g, float *b)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_COLOR;
     ds.colorscale = vec(clamp(*r, 0.0f, 1.0f), clamp(*g, 0.0f, 1.0f), clamp(*b, 0.0f, 1.0f));
@@ -2256,7 +2295,11 @@ COMMAND(vcolor, "fff");
 
 void vreset()
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     mpeditvslot(usevdelta, ds, allfaces, sel, true);
 }
@@ -2264,7 +2307,11 @@ COMMAND(vreset, "");
 
 void vshaderparam(const char *name, float *x, float *y, float *z, float *w)
 {
+    #if PROTOCOL_VERSION < 260
+    if(noedit() || (nompedit && multiplayer())) return;
+    #else
     if(noedit()) return;
+    #endif
     VSlot ds;
     ds.changed = 1<<VSLOT_SHPARAM;
     if(name[0])
