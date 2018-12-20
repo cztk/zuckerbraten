@@ -524,7 +524,7 @@ void syncchannels()
 void updatesounds()
 {
     updatemumble();
-    if(nosound) return;
+    if(nosound || soundvol <= 0) return;
     if(minimized) stopsounds();
     else
     {

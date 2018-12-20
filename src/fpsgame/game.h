@@ -2,7 +2,7 @@
 #define __GAME_H__
 
 #include "cube.h"
-
+extern int soundvol;
 // console message types
 
 enum
