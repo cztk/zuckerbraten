@@ -228,6 +228,11 @@ void gl_checkextensions()
     conoutf(CON_INIT, "Renderer: %s (%s)", renderer, vendor);
     conoutf(CON_INIT, "Driver: %s", version);
 
+#ifdef __APPLE__
+    // extern int mac_osversion();
+    // int osversion = mac_osversion();  /* 0x0A0600 = 10.6, assumed minimum */
+#endif
+
     bool mesa = false, intel = false, ati = false, nvidia = false;
     if(strstr(renderer, "Mesa") || strstr(version, "Mesa"))
     {
