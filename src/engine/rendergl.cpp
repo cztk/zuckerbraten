@@ -3,6 +3,7 @@
 #include "engine.h"
 
 bool hasVAO = false, hasFBO = false, hasAFBO = false, hasDS = false, hasTF = false, hasTRG = false, hasTSW = false, hasS3TC = false, hasFXT1 = false, hasLATC = false, hasRGTC = false, hasAF = false, hasFBB = false, hasUBO = false, hasMBR = false;
+bool mesa = false, intel = false, amd = false, nvidia = false;
 
 VAR(glversion, 1, 0, 0);
 VAR(glslversion, 1, 0, 0);
@@ -233,7 +234,6 @@ void gl_checkextensions()
     // int osversion = mac_osversion();  /* 0x0A0600 = 10.6, assumed minimum */
 #endif
 
-    bool mesa = false, intel = false, ati = false, nvidia = false;
     if(strstr(renderer, "Mesa") || strstr(version, "Mesa"))
     {
         mesa = true;
