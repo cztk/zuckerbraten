@@ -1,0 +1,3 @@
+for f in $(find . -iname '*.png'); do
+convert $f -fuzz 10% -fill red +opaque black $f
+done
