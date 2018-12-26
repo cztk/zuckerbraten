@@ -242,7 +242,7 @@ void gl_checkextensions()
     else if(strstr(vendor, "NVIDIA"))
         nvidia = true;
     else if(strstr(vendor, "ATI") || strstr(vendor, "Advanced Micro Devices"))
-        ati = true;
+        amd = true;
     else if(strstr(vendor, "Intel"))
         intel = true;
 
@@ -454,7 +454,7 @@ void gl_checkextensions()
     else fatal("Framebuffer object support is required!");
 
     extern int fpdepthfx;
-    if(ati)
+    if(amd)
     {
         //conoutf(CON_WARN, "WARNING: ATI cards may show garbage in skybox. (use \"/ati_skybox_bug 1\" to fix)");
 
