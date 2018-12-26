@@ -792,18 +792,30 @@ void fixcamerarange()
     while(camera1->yaw>=360.0f) camera1->yaw -= 360.0f;
 }
 
+void modifyorient(float yaw, float pitch)
+{
+    camera1->yaw += yaw;
+    camera1->pitch += pitch;
+    fixcamerarange();
+    if(camera1!=player && !detachedcamera)
+    {
+        player->yaw = camera1->yaw;
+        player->pitch = camera1->pitch;
+    }
+}
+
 void mousemove(int dx, int dy)
 {
     if(!game::allowmouselook()) return;
     float cursens = sensitivity, curaccel = mouseaccel;
     if(zoom)
     {
-        if(zoomautosens) 
+        if(zoomautosens)
         {
             cursens = float(sensitivity*zoomfov)/fov;
             curaccel = float(mouseaccel*zoomfov)/fov;
         }
-        else 
+        else
         {
             cursens = zoomsens;
             curaccel = zoomaccel;
@@ -811,14 +823,7 @@ void mousemove(int dx, int dy)
     }
     if(curaccel && curtime && (dx || dy)) cursens += curaccel * sqrtf(dx*dx + dy*dy)/curtime;
     cursens /= 33.0f*sensitivityscale;
-    camera1->yaw += dx*cursens;
-    camera1->pitch -= dy*cursens*(invmouse ? -1 : 1);
-    fixcamerarange();
-    if(camera1!=player && !detachedcamera)
-    {
-        player->yaw = camera1->yaw;
-        player->pitch = camera1->pitch;
-    }
+    modifyorient(dx*cursens, dy*cursens*(invmouse ? 1 : -1));
 }
 
 void recomputecamera()
