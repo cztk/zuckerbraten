@@ -1312,6 +1312,7 @@ int main(int argc, char **argv)
         inbetweenframes = false;
         if(mainmenu) gl_drawmainmenu();
         else gl_drawframe();
+        framehasgui = false;
         swapbuffers();
         renderedframe = inbetweenframes = true;
     }
