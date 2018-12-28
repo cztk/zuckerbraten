@@ -283,6 +283,8 @@ extern void dynlightreaching(const vec &target, vec &color, vec &dir, bool hud =
 extern void removetrackeddynlights(physent *owner = NULL);
 
 // rendergl
+extern int showfpsrange; // tiny stats
+
 extern physent *camera1;
 extern vec worldpos, camdir, camright, camup;
 

@@ -1,1 +1,6 @@
 doupdateparticles [0..1] if set to 0 stops updating & rendering particles at all
+
+showpingdisplay, 0, 1, 1
+showstatsdisplay, 0, 1, 1
+scaletimeleft, 0, 1, 1
+

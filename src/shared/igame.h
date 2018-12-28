@@ -66,6 +66,9 @@ namespace game
     extern void preload();
     extern float abovegameplayhud(int w, int h);
     extern void gameplayhud(int w, int h);
+    extern void rendertimeleft(int w, int h, int fonth);                                       //NEW tinystats
+    extern void renderping(int w, int h, int fonth);                                           //NEW tinystats
+    extern bool renderstatsdisplay(int conw, int conh, int FONTH, int woffset, int roffset);   //NEW tinystats
     extern bool canjump();
     extern bool allowmove(physent *d);
     extern void doattack(bool on);

@@ -1307,7 +1307,7 @@ int main(int argc, char **argv)
             updateparticles();
         updatesounds();
 
-        if(minimized) continue;
+        if(minimized)  continue;
 
         inbetweenframes = false;
         if(mainmenu) gl_drawmainmenu();

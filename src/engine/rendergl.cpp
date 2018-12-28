@@ -2173,6 +2173,13 @@ VAR(statrate, 1, 200, 1000);
 
 FVARP(conscale, 1e-3f, 0.33f, 1e3f);
 
+//NEW tiny stats display
+namespace game
+{
+    extern int showpingdisplay;
+}
+//NEW END
+
 void gl_drawhud()
 {
     int w = screenw, h = screenh;
@@ -2257,6 +2264,15 @@ void gl_drawhud()
                 else draw_textf("fps %d", conw-5*FONTH, conh-FONTH*3/2, curfps[0]);
                 roffset += FONTH;
             }
+
+            //NEW tiny stats
+            //render displays from right to left, otherwise indent of displays may be wrong
+            game::renderping(conw, conh, FONTH);
+            if((showfps || (isconnected(false, false) && (game::showpingdisplay)))) roffset += FONTH;
+            if(!showfps && (((isconnected(false, false) && (game::showpingdisplay))))) roffset += FONTH;
+            if(game::renderstatsdisplay(conw, conh, FONTH, wallclock ? 220 : 0, roffset) && !wallclock) roffset += FONTH;
+            //NEW END
+
 
             if(wallclock)
             {

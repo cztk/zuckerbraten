@@ -892,6 +892,73 @@ namespace game
     VARP(teamcrosshair, 0, 1, 1);
     VARP(hitcrosshair, 0, 425, 1000);
 
+    //mod tiny stats start
+
+    VARP(showpingdisplay, 0, 1, 1);
+    VARP(showstatsdisplay, 0, 1, 1);
+    VARP(scaletimeleft, 0, 1, 1);
+
+    void renderping(int w, int h, int fonth)
+    {
+        if(!showpingdisplay || showfpsrange || (!isconnected(false, false) && !game::demoplayback)) return;
+        fpsent *d = hudplayer(); 
+        if(game::demoplayback && d == player1) return;
+        if(d->aitype!=AI_NONE)
+        {
+            d = getclient(d->ownernum);
+            if(!d) return;
+        }
+        float ping = d->ping;
+        draw_textf("%.0f ms", w-10*fonth, h-fonth*3/2, ping);
+    }
+
+    static const char *sdfmtdefault = "Frags: \f0%f \f7Deaths: \f3%d \f7KpD: \f0%k \f7Acc: \f1%a%%"
+                                      "[ctf] \fs\f7Flags: \f0%x\fr [ctf][collect] \fs\f7Skulls: \f0%x\fr[collect]";
+
+    SVARFP(statsdisplayfmt, sdfmtdefault, if(!statsdisplayfmt[0]) setsvar("statsdisplayfmt", sdfmtdefault, false));
+
+    bool renderstatsdisplay(int conw, int conh, int FONTH, int woffset, int roffset)
+    {
+        if(!showstatsdisplay) return false;
+
+        fpsent *f;
+
+        if(player1->state==CS_SPECTATOR)
+            f = followingplayer();
+        else
+            f = hudplayer();
+
+        if(f)
+        {
+            string stats;
+            *stats = 0;
+            float kpd = float(f->frags)/float(f->deaths ? f->deaths:1);
+            float acc = (f==player1 ? (f->totaldamage*100)/max(f->totalshots, 1) : 0);
+            formatstring(stats, "Frags: \f0%i \f7Deaths: \f0%i \f7KpD: \f0%.2f \f7Acc: \f0%.2f", f->frags, f->deaths, kpd, acc);
+ 
+            int tw = text_width(stats);
+            draw_text(stats, conw-max(5*FONTH, 2*FONTH+tw)-woffset, conh-FONTH*3/2-roffset);
+
+            *stats = 0;
+            if(m_ctf)
+            {
+                formatstring(stats, "Flags: \f0%i", f->flags);
+            }
+            if(m_collect)
+            {
+                formatstring(stats, "Skulls: \f0%i", f->flags);
+            }
+            
+            tw = text_width(stats);
+            if(0 < tw)
+                draw_text(stats, conw-max(5*FONTH, 2*FONTH+tw)-woffset, conh-FONTH*3/2-(roffset+FONTH));
+
+        }
+        return true;
+    }
+    //mod tiny stats end
+
+
     const char *defaultcrosshair(int index)
     {
         switch(index)
