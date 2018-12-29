@@ -283,6 +283,20 @@ static const int msgsizes[] =               // size inclusive message token, 0 f
     -1
 };
 
+enum
+{
+    Z_IDENT = 0,
+    NUMZUCKERMSG
+};
+
+static const int zuckermsgsizes[] =
+{
+    Z_IDENT, 1,
+    -1
+};
+
+#define ZUCKER_PROTOCOL_VERSION 1            // bump when protocol changes
+
 #define SAUERBRATEN_LANINFO_PORT 28784
 #define SAUERBRATEN_SERVER_PORT 28785
 #define SAUERBRATEN_SERVINFO_PORT 28786

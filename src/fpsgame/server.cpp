@@ -211,6 +211,7 @@ namespace server
 
     struct clientinfo
     {
+        uint zucker_proto;
         int clientnum, ownernum, connectmillis, sessionid, overflow;
         string name, team, mapvote;
         int playermodel;
@@ -237,7 +238,7 @@ namespace server
         int authkickvictim;
         char *authkickreason;
 
-        clientinfo() : getdemo(NULL), getmap(NULL), clipboard(NULL), authchallenge(NULL), authkickreason(NULL) { reset(); }
+        clientinfo() : zucker_proto(0), getdemo(NULL), getmap(NULL), clipboard(NULL), authchallenge(NULL), authkickreason(NULL) { reset(); }
         ~clientinfo() { events.deletecontents(); cleanclipboard(); cleanauth(); }
 
         void addevent(gameevent *e)
@@ -2827,9 +2828,31 @@ namespace server
         if(servermotd[0]) sendf(ci->clientnum, 1, "ris", N_SERVMSG, servermotd);
     }
 
+    void parsezucker(int sender, int chan, packetbuf &p)
+    {
+        char text[MAXTRANS];
+        int type;
+        clientinfo *ci = sender>=0 ? getinfo(sender) : NULL, *cq = ci, *cm = ci;
+        if(ci && ci->connected)
+        {
+            while(p.length() < p.maxlen)
+            {
+                switch(getint(p))
+                {
+                    case Z_IDENT:
+                        ci->zucker_proto = (uint)getint(p);
+                        sendf(ci->clientnum, 3, "rii", Z_IDENT, ZUCKER_PROTOCOL_VERSION);
+                    break;
+                }
+            }
+        }
+    }
+
     void parsepacket(int sender, int chan, packetbuf &p)     // has to parse exactly each byte of the packet
     {
-        if(sender<0 || p.packet->flags&ENET_PACKET_FLAG_UNSEQUENCED || chan > 2) return;
+        if(sender<0) return;
+        if(3 == chan) return parsezucker(sender, chan, p);
+        if(p.packet->flags&ENET_PACKET_FLAG_UNSEQUENCED || chan > 2) return;
         char text[MAXTRANS];
         int type;
         clientinfo *ci = sender>=0 ? getinfo(sender) : NULL, *cq = ci, *cm = ci;
@@ -3645,7 +3668,7 @@ namespace server
     int serverport(int infoport) { return infoport < 0 ? SAUERBRATEN_SERVER_PORT : infoport-1; }
     const char *defaultmaster() { return "master.sauerbraten.org"; }
     int masterport() { return SAUERBRATEN_MASTER_PORT; }
-    int numchannels() { return 3; }
+    int numchannels() { return 4; }
 
     #include "extinfo.h"
 
