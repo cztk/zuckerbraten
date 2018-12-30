@@ -19,6 +19,7 @@ enum
 #define DMF 16.0f                // for world locations
 #define DNF 100.0f              // for normalized vectors
 #define DVELF 1.0f              // for playerspeed based velocity vectors
+#define PROTOCOL_VERSION 259
 
 enum                            // static entity types
 {
@@ -301,7 +302,6 @@ static const int zuckermsgsizes[] =
 #define SAUERBRATEN_SERVER_PORT 28785
 #define SAUERBRATEN_SERVINFO_PORT 28786
 #define SAUERBRATEN_MASTER_PORT 28787
-#define PROTOCOL_VERSION 259            // bump when protocol changes
 #define DEMO_VERSION 1                  // bump when demo format changes
 #define DEMO_MAGIC "SAUERBRATEN_DEMO"
 
