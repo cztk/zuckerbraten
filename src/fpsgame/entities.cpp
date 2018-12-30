@@ -662,6 +662,7 @@ namespace entities
     }
 
     const char *entnameinfo(entity &e) { return ""; }
+    #endif
     const char *entname(int i)
     {
         static const char * const entnames[] =
@@ -680,6 +681,34 @@ namespace entities
         return i>=0 && size_t(i)<sizeof(entnames)/sizeof(entnames[0]) ? entnames[i] : "";
     }
 
+    int entnum(char *entname)
+    {
+        if(0 == strcmp(entname , "SHELLS") || 0 == strcmp(entname , "shells"))
+            return I_SHELLS;
+        if(0 == strcmp(entname , "BULLETS") || 0 == strcmp(entname , "bullets"))
+            return I_BULLETS;
+        if(0 == strcmp(entname , "ROCKETS") || 0 == strcmp(entname , "rockets"))
+            return I_ROCKETS;
+        if(0 == strcmp(entname , "ROUNDS") || 0 == strcmp(entname , "rounds"))
+            return I_ROUNDS;
+        if(0 == strcmp(entname , "GRENADES") || 0 == strcmp(entname , "grenades"))
+            return I_GRENADES;
+        if(0 == strcmp(entname , "CARTRIDGES") || 0 == strcmp(entname , "catridges"))
+            return I_CARTRIDGES;
+        if(0 == strcmp(entname , "HEALTH") || 0 == strcmp(entname , "health"))
+            return I_HEALTH;
+        if(0 == strcmp(entname , "BOOST") || 0 == strcmp(entname , "boost"))
+            return I_BOOST;
+        if(0 == strcmp(entname , "GREENARMOUR") || 0 == strcmp(entname , "greenarmour"))
+            return I_GREENARMOUR;
+        if(0 == strcmp(entname , "YELLOWARMOUR") || 0 == strcmp(entname , "yellowarmour"))
+            return I_YELLOWARMOUR;
+        if(0 == strcmp(entname , "QUAD") || 0 == strcmp(entname , "quad"))
+            return I_QUAD;
+ 
+        return -1;
+    }
+    #ifndef STANDALONE
     void editent(int i, bool local)
     {
         extentity &e = *ents[i];

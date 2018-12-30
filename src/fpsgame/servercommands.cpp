@@ -108,9 +108,44 @@
         return 0;
     }
 
+    int fcanspawnitem(int cn, vector<char *> args)
+    {
+        string msg;
+
+        if( 3 > args.length() || ( 2 <= args.length() && 0 == strcmp("help", args[1]) ) )
+        {
+            formatstring( msg, "%s takes two arguments: item name and status. Enable quad: %s quad 1 . Disable yellow armour: %s yellowarmour 0", args[0], args[0], args[0] );
+            sendf(cn, 1, "ris", N_SERVMSG, msg);
+        }
+        else
+        {
+            int itemnum = entities::entnum(args[1]);
+            if(-1 == itemnum)
+            {
+                formatstring( msg, "%s is not a valid item. Try one of: shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad", args[1] );
+                sendf(cn, 1, "ris", N_SERVMSG, msg);
+                return -1;
+            }
+
+            if( forcements.length() < itemnum )
+            {
+                for(int i=forcements.length();i<itemnum;i++)
+                {
+                    forcements.add(false);
+                }
+            }
+            formatstring( msg, "%s spawning is now set to %s", args[1], args[2] );
+            sendf(cn, 1, "ris", N_SERVMSG, msg);
+            forcements[itemnum] = ( 0 == strcmp("0" , args[2])  ) ? false : true;
+        }
+        return 0;
+    }
+
     void installservcmds()
     {
         addservcmd("#test", 0, true, test);
         addservcmdalias("#test", "#foo");
+
+        addservcmd("#fcanspawnitem", 1, true, fcanspawnitem);
     }
 

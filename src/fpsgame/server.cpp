@@ -714,6 +714,7 @@ namespace server
 
     uint mcrc = 0;
     vector<entity> ments;
+    vector<bool> forcements;
     vector<server_entity> sents;
     vector<savedscore> scores;
 
@@ -853,7 +854,12 @@ namespace server
     collectservmode collectmode;
     servmode *smode = NULL;
 
-    bool canspawnitem(int type) { return !m_noitems && (type>=I_SHELLS && type<=I_QUAD && (!m_noammo || type<I_SHELLS || type>I_CARTRIDGES)); }
+    bool forcecanspawnitem(int type)
+    {
+        return ( forcements.length() >= type  ) ? forcements[type] : false;
+    }
+
+    bool canspawnitem(int type) { return (forcecanspawnitem(type) || (!m_noitems && (type>=I_SHELLS && type<=I_QUAD && (!m_noammo || type<I_SHELLS || type>I_CARTRIDGES)))); }
 
     int spawntime(int type)
     {

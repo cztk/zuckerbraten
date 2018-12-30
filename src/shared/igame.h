@@ -20,6 +20,8 @@ namespace entities
     extern vector<extentity *> &getents();
     extern const char *entmodel(const entity &e);
     extern void animatemapmodel(const extentity &e, int &anim, int &basetime);
+    extern int entnum(char *entname);
+    extern const char *entname(int i);
 }
 
 namespace game
