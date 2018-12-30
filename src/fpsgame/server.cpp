@@ -856,7 +856,7 @@ namespace server
 
     bool forcecanspawnitem(int type)
     {
-        return ( forcements.length() >= type  ) ? forcements[type] : false;
+        return ( forcements.inrange(type)  ) ? forcements[type] : false;
     }
 
     bool canspawnitem(int type) { return (forcecanspawnitem(type) || (!m_noitems && (type>=I_SHELLS && type<=I_QUAD && (!m_noammo || type<I_SHELLS || type>I_CARTRIDGES)))); }

@@ -1,6 +1,6 @@
     struct servcommand
     {
-        char *name;
+        const char *name;
         int minprivilege;
         bool enabled;
         int (*run)(int, vector<char *>); // cn, arguments
@@ -9,6 +9,6 @@
 
     struct servaliascommand
     {
-        char *name;
+        const char *name;
         int commandid;
     };

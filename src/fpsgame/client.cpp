@@ -1272,6 +1272,7 @@ namespace game
             }
 
             default:
+                conoutf(CON_ERROR, "type %i ", type);
                 neterr("type");
                 return;
         }
@@ -2045,6 +2046,7 @@ namespace game
                 break;
 
             default:
+                conoutf(CON_ERROR, "type %i ", type);
                 neterr("type", cn < 0);
                 return;
         }

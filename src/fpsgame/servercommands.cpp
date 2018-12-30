@@ -3,7 +3,7 @@
     vector<servcommand> servcommands;
     vector<servaliascommand> servcommandaliases;
 
-    int hasservcmd(char * name)
+    int hasservcmd(const char * name)
     {
         int i;
         int l = servcommands.length();
@@ -28,7 +28,7 @@
         return -1;
     }
 
-    bool addservcmd(char *name, int minprivilege, bool enabled, int (*run)(int, vector<char *>))
+    bool addservcmd(const char *name, int minprivilege, bool enabled, int (*run)(int, vector<char *>))
     {
         if( -1 == hasservcmd(name) )
         {
@@ -39,7 +39,7 @@
         return false;
     }
 
-    bool addservcmdalias(char *name, char *aliasname)
+    bool addservcmdalias(const char *name, const char *aliasname)
     {
         int i = hasservcmd( name );
         if( -1 != i )
@@ -51,7 +51,7 @@
         return false;
     }
 
-    bool setenabledservcmd(char *name, bool enabled)
+    bool setenabledservcmd(const char *name, bool enabled)
     {
         int i = hasservcmd( name );
         if( -1 != i )
@@ -62,7 +62,7 @@
         return false;
     }
 
-    bool setminprivilegeservcmd(char *name, bool minprivilege)
+    bool setminprivilegeservcmd(const char *name, bool minprivilege)
     {
         int i = hasservcmd( name );
         if( -1 != i )
@@ -114,8 +114,42 @@
 
         if( 3 > args.length() || ( 2 <= args.length() && 0 == strcmp("help", args[1]) ) )
         {
-            formatstring( msg, "%s takes two arguments: item name and status. Enable quad: %s quad 1 . Disable yellow armour: %s yellowarmour 0", args[0], args[0], args[0] );
-            sendf(cn, 1, "ris", N_SERVMSG, msg);
+            if( 2 <= args.length() && 0 != strcmp("help", args[1]) )
+            {
+                if( 0 == strcmp("state", args[1]) )
+                {
+                    formatstring( msg, "spawnstates: shells=%i, bullets=%i, rockets=%i, rounds=%i, grenades=%i, catridges=%i, health=%i, boost=%i, greenarmour=%i, yellowarmour=%i, quad=%i",
+                        forcecanspawnitem(I_SHELLS),
+                        forcecanspawnitem(I_BULLETS),
+                        forcecanspawnitem(I_ROCKETS),
+                        forcecanspawnitem(I_ROUNDS),
+                        forcecanspawnitem(I_GRENADES),
+                        forcecanspawnitem(I_CARTRIDGES),
+                        forcecanspawnitem(I_HEALTH),
+                        forcecanspawnitem(I_BOOST),
+                        forcecanspawnitem(I_GREENARMOUR),
+                        forcecanspawnitem(I_YELLOWARMOUR),
+                        forcecanspawnitem(I_QUAD)
+                    );
+                    sendf(cn, 1, "ris", N_SERVMSG, msg);
+                }
+                else
+                {
+                    int itemnum = entities::entnum(args[1]);
+                    int status = forcements.inrange(itemnum) ? forcements[itemnum] : 0;
+                    formatstring( msg, "%s spawn state is: %i", args[1], status );
+                    sendf(cn, 1, "ris", N_SERVMSG, msg);
+                }
+            }
+            else
+            {
+                formatstring( msg, "%s takes up to two arguments: item name and status. Enable quad: %s quad 1 . Disable yellow armour: %s yellowarmour 0.", args[0], args[0], args[0] );
+                sendf(cn, 1, "ris", N_SERVMSG, msg);
+                formatstring( msg, "valid items are: shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad" );
+                sendf(cn, 1, "ris", N_SERVMSG, msg);
+                formatstring( msg, "%s quad < would display the state of quad. %s state  < would display state of all options", args[0], args[0] );
+                sendf(cn, 1, "ris", N_SERVMSG, msg);
+            }
         }
         else
         {
@@ -129,7 +163,7 @@
 
             if( forcements.length() < itemnum )
             {
-                for(int i=forcements.length();i<itemnum;i++)
+                for(int i=forcements.length();i<=itemnum;i++)
                 {
                     forcements.add(false);
                 }
