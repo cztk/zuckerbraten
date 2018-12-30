@@ -781,6 +781,7 @@ namespace server
     {
         smapname[0] = '\0';
         resetitems();
+        installservcmds();
     }
 
     int numclients(int exclude = -1, bool nospec = true, bool noai = true, bool priv = false)
@@ -2828,6 +2829,8 @@ namespace server
         if(servermotd[0]) sendf(ci->clientnum, 1, "ris", N_SERVMSG, servermotd);
     }
 
+    #include "servercommands.cpp"
+
     void parsezucker(int sender, int chan, packetbuf &p)
     {
         char text[MAXTRANS];
@@ -3174,12 +3177,35 @@ namespace server
 
             case N_TEXT:
             {
-                QUEUE_AI;
-                QUEUE_MSG;
                 getstring(text, p);
                 filtertext(text, text, true, true);
-                QUEUE_STR(text);
-                if(isdedicatedserver() && cq) logoutf("%s: %s", colorname(cq), text);
+
+                bool is_command = text[0] == '#';
+                if(is_command)
+                {
+                    int textlen  = strlen(text);
+                    char delim[] = " ";
+                    vector<char *> textlist;
+
+                    char *ptr = strtok(text, delim);
+                    while( ptr != NULL )
+                    {
+                        textlist.add(ptr);
+                        ptr = strtok(NULL, delim);
+                    }
+
+                    if( 1 <= textlist.length() )
+                    {
+                        runservcmd(sender, textlist[0], textlist);
+                    }
+                }
+                else
+                {
+                    QUEUE_AI;
+                    QUEUE_MSG;
+                    QUEUE_STR(text);
+                    if(isdedicatedserver() && cq) logoutf("%s: %s", colorname(cq), text);
+                }
                 break;
             }
 
