@@ -239,7 +239,7 @@
             {
                 formatstring( msg, "\f3%s \f6is \f3not\f6 a valid item. Try one of: \f1shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad", args[1] );
                 sendf(cn, 1, "ris", N_SERVMSG, msg);
-                return -1;
+                return 1;
             }
             loaditems();
             formatstring( msg, "\f6%s \f7spawning is now set to \f1%s", args[1], args[2] );
