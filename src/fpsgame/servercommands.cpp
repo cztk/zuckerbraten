@@ -3,6 +3,9 @@
     vector<servcommand> servcommands;
     vector<servaliascommand> servcommandaliases;
 
+    /*
+        Finds command entry number within servcommands vector. If none found, returns value is -1.
+    */
     int hasservcmd(const char * name)
     {
         int i;
@@ -28,6 +31,9 @@
         return -1;
     }
 
+    /*
+        Add a new command entry to servcommands vector.
+    */
     bool addservcmd(const char *name, int minprivilege, bool enabled, int (*run)(int, vector<char *>))
     {
         if( -1 == hasservcmd(name) )
@@ -39,6 +45,10 @@
         return false;
     }
 
+    /*
+        Add an alias for any command in servcommands vector. Aliases are stored in servcommandaliases vector and only contain the
+        alias name and index number to the real command within servcommands vector.
+    */
     bool addservcmdalias(const char *name, const char *aliasname)
     {
         int i = hasservcmd( name );
@@ -51,6 +61,9 @@
         return false;
     }
 
+    /*
+        Enable/Disable a command.
+    */
     bool setenabledservcmd(const char *name, bool enabled)
     {
         int i = hasservcmd( name );
@@ -62,6 +75,9 @@
         return false;
     }
 
+    /*
+        Sets minimum privilege to run a command.
+    */
     bool setminprivilegeservcmd(const char *name, bool minprivilege)
     {
         int i = hasservcmd( name );
@@ -73,6 +89,13 @@
         return false;
     }
 
+    /*
+        Try running a command. Takes id of the clientnumber calling the command, command name without starting #
+        aswell as a list of arguments.
+        First argument in args vector should be the command which has been called ( or the alias command name  ) with starting #
+        Called functions shall not return -1
+        The help command may return -1 because of lazyness 
+    */
     int runservcmd(int cn, char *name, vector<char *> args)
     {
         int i = hasservcmd( name );
@@ -95,6 +118,10 @@
 //  functions
 //  ----------------
 
+    /*
+        Resets all gamemode modifications altering gameplay.
+        TODO use default values from config.
+    */
     int srvcmd_resetmodifications(int cn, vector<char *> args)
     {
         forcements.setsize(0);
@@ -102,13 +129,19 @@
         return 0;
     }
 
+    /*
+        If a command a user requests help for is found, the command will be called
+        with "help" as first parameter ( after the #commandname argument in args list )
+    */
     int srvcmd_help(int cn, vector<char *> args)
     {
         vector<char *> args2;
         if( 2 <= args.length() )
         {
+            string commandarg;
+            formatstring( commandarg, "#%s", args[1] );
             char *helpcmd = (char *)"help";
-            args2.add( args[1] );
+            args2.add( commandarg );
             args2.add( helpcmd );
             return runservcmd(cn, args[1], args2 );
         }
@@ -118,6 +151,9 @@
         return 0;
     }
 
+    /*
+        be the first to disable this command :o)
+    */
     int srvcmd_test(int cn, vector<char *> args)
     {
         sendf(cn, 1, "ris", N_SERVMSG, "\f5you just wasted some time, thank you for testing me.");
@@ -125,6 +161,9 @@
         return 0;
     }
 
+    /*
+        Enables/Disables spawning of several entities on any game mode.
+    */
     int srvcmd_fcanspawnitem(int cn, vector<char *> args)
     {
         string msg;
@@ -192,6 +231,9 @@
         return 0;
     }
 
+    /*
+        Put commands and aliaes to the vectors
+    */
     void installservcmds()
     {
         addservcmd("test", 0, true, srvcmd_test);
