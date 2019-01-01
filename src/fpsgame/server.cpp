@@ -3192,7 +3192,7 @@ namespace server
                 {
                     vector<char *> textlist;
                     char *token;
-                    char *ptr = ftext;
+                    char *ptr = &ftext[1];
                     while ((token = strtok_r(ptr, " ", &ptr))) 
                     {
                         textlist.add(token);
