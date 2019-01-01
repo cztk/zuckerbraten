@@ -84,15 +84,8 @@
             {
                 return servcommands[i].run( cn, args );
             }
-            else
-            {
-                sendf(cn, 1, "ris", N_SERVMSG, "unknown command.");
-            }
         }
-        else
-        {
-            sendf(cn, 1, "ris", N_SERVMSG, "unknown command.");
-        }
+        sendf(cn, 1, "ris", N_SERVMSG, "unknown command.");
         return -1;
     }
 
