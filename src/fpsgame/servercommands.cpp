@@ -100,22 +100,21 @@
 //  functions
 //  ----------------
 
-    int resetmodifications(int cn, vector<char *> args)
+    int srvcmd_resetmodifications(int cn, vector<char *> args)
     {
         forcements.setsize(0);
 
         return 0;
     }
 
-
-    int test(int cn, vector<char *> args)
+    int srvcmd_test(int cn, vector<char *> args)
     {
         sendf(cn, 1, "ris", N_SERVMSG, "you just wasted some time, thank you for testing me.");
         setenabledservcmd("#test", false);
         return 0;
     }
 
-    int fcanspawnitem(int cn, vector<char *> args)
+    int srvcmd_fcanspawnitem(int cn, vector<char *> args)
     {
         string msg;
 
@@ -184,11 +183,11 @@
 
     void installservcmds()
     {
-        addservcmd("#test", 0, true, test);
+        addservcmd("#test", 0, true, srvcmd_test);
         addservcmdalias("#test", "#foo");
 
-        addservcmd("#resetmods", 1, true, resetmodifications);
+        addservcmd("#resetmods", 1, true, srvcmd_resetmodifications);
 
-        addservcmd("#fcanspawnitem", 1, true, fcanspawnitem);
+        addservcmd("#fcanspawnitem", 1, true, srvcmd_fcanspawnitem);
     }
 
