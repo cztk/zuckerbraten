@@ -3183,21 +3183,19 @@ namespace server
 
             case N_TEXT:
             {
+                string ftext;
                 getstring(text, p);
-                filtertext(text, text, true, true);
+                filtertext(ftext, text, true, true);
 
-                bool is_command = text[0] == '#';
-                if(is_command)
+                bool iscommand = ('#' == ftext[0]);
+                if(iscommand)
                 {
-                    int textlen  = strlen(text);
-                    char delim[] = " ";
                     vector<char *> textlist;
-
-                    char *ptr = strtok(text, delim);
-                    while( ptr != NULL )
+                    char *token;
+                    char *ptr = ftext;
+                    while ((token = strtok_r(ptr, " ", &ptr))) 
                     {
-                        textlist.add(ptr);
-                        ptr = strtok(NULL, delim);
+                        textlist.add(token);
                     }
 
                     if( 1 <= textlist.length() )
@@ -3208,10 +3206,10 @@ namespace server
                 else
                 {
                     QUEUE_AI;
-                    QUEUE_MSG;
-                    QUEUE_STR(text);
-                    if(isdedicatedserver() && cq) logoutf("%s: %s", colorname(cq), text);
+                    QUEUE_INT(N_TEXT);
+                    QUEUE_STR(ftext);
                 }
+                if(isdedicatedserver() && cq) logoutf("%s: %s", colorname(cq), ftext);
                 break;
             }
 

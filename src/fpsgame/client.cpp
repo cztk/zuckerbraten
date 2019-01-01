@@ -1272,7 +1272,7 @@ namespace game
             }
 
             default:
-                conoutf(CON_ERROR, "type %i ", type);
+                conoutf(CON_ERROR, "parsepos type %i ", type);
                 neterr("type");
                 return;
         }
@@ -1323,14 +1323,14 @@ namespace game
                 break;
             }
     }
-
+    int prevtype;
     void parsemessages(int cn, fpsent *d, ucharbuf &p)
     {
         static char text[MAXTRANS];
         int type;
         bool mapchanged = false, demopacket = false;
 
-        while(p.remaining()) switch(type = getint(p))
+        while(p.remaining()){ switch(type = getint(p))
         {
             case N_DEMOPACKET: demopacket = true; break;
 
@@ -2046,10 +2046,10 @@ namespace game
                 break;
 
             default:
-                conoutf(CON_ERROR, "type %i ", type);
+                conoutf(CON_ERROR, "prevtype %i type %i ", prevtype, type);
                 neterr("type", cn < 0);
                 return;
-        }
+        } prevtype = type; }
     }
 
     void receivefile(packetbuf &p)
