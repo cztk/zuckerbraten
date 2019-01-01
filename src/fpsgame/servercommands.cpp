@@ -162,13 +162,38 @@
     }
 
     /*
+        Adding item to forcements vector with status.
+        *.cfg call example:
+        fcanspawnitem SHELLS 1
+    */
+    int setfcanspawnitem(char *itemname, int status)
+    {
+            int itemnum = entities::entnum(itemname);
+            if(-1 == itemnum)
+            {
+                return -1;
+            }
+            if( forcements.length() < itemnum )
+            {
+                for(int i=forcements.length();i<=itemnum;i++)
+                {
+                    forcements.add(false);
+                }
+            }
+            forcements[itemnum] = (status);
+            return itemnum;
+    }
+    COMMANDN(fcanspawnitem, setfcanspawnitem, "si");
+
+    /*
         Enables/Disables spawning of several entities on any game mode.
     */
     int srvcmd_fcanspawnitem(int cn, vector<char *> args)
     {
         string msg;
+        clientinfo *ci = getinfo(cn);
 
-        if( 3 > args.length() || ( 2 <= args.length() && 0 == strcmp("help", args[1]) ) )
+        if( 3 > args.length() || ( 2 <= args.length() && 0 == strcmp("help", args[1]) ) || ci->privilege < PRIV_MASTER )
         {
             if( 2 <= args.length() && 0 != strcmp("help", args[1]) )
             {
@@ -188,6 +213,7 @@
                         forcecanspawnitem(I_QUAD)
                     );
                     sendf(cn, 1, "ris", N_SERVMSG, msg);
+                    return 0;
                 }
                 else
                 {
@@ -195,38 +221,29 @@
                     int status = forcements.inrange(itemnum) ? forcements[itemnum] : 0;
                     formatstring( msg, "\f6%s \f7spawn state is: \f1%i", args[1], status );
                     sendf(cn, 1, "ris", N_SERVMSG, msg);
+                    return 0;
                 }
             }
-            else
-            {
-                formatstring( msg, "\f0#%s \f7takes up to two arguments: \f0item status\f7. Enable quad: \f0#%s quad 1\f7 . Disable yellow armour: \f0#%s yellowarmour 0\f7.", args[0], args[0], args[0] );
-                sendf(cn, 1, "ris", N_SERVMSG, msg);
-                formatstring( msg, "\f6valid items are:\f1 shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad" );
-                sendf(cn, 1, "ris", N_SERVMSG, msg);
-                formatstring( msg, "\f0#%s quad \f7 displays the state of quad spawn. \f0#%s state  \f7displays state of all options", args[0], args[0] );
-                sendf(cn, 1, "ris", N_SERVMSG, msg);
-            }
+            formatstring( msg, "\f0#%s \f7takes up to two arguments: \f0item status\f7. Enable quad: \f0#%s quad 1\f7 . Disable yellow armour: \f0#%s yellowarmour 0\f7.", args[0], args[0], args[0] );
+            sendf(cn, 1, "ris", N_SERVMSG, msg);
+            formatstring( msg, "\f6valid items are:\f1 shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad" );
+            sendf(cn, 1, "ris", N_SERVMSG, msg);
+            formatstring( msg, "\f0#%s quad \f7 displays the state of quad spawn. \f0#%s state  \f7displays state of all options", args[0], args[0] );
+            sendf(cn, 1, "ris", N_SERVMSG, msg);
+            return 0;
         }
         else
         {
-            int itemnum = entities::entnum(args[1]);
+            int itemnum = setfcanspawnitem( args[1], ( 0 == strcmp("0" , args[2]) ) ? 0 : 1 );
             if(-1 == itemnum)
             {
                 formatstring( msg, "\f3%s \f6is \f3not\f6 a valid item. Try one of: \f1shells, bullets, rockets, rounds, grenades, catridges, health, boost, greenarmour, yellowarmour, quad", args[1] );
                 sendf(cn, 1, "ris", N_SERVMSG, msg);
                 return -1;
             }
-
-            if( forcements.length() < itemnum )
-            {
-                for(int i=forcements.length();i<=itemnum;i++)
-                {
-                    forcements.add(false);
-                }
-            }
+            loaditems();
             formatstring( msg, "\f6%s \f7spawning is now set to \f1%s", args[1], args[2] );
             sendf(cn, 1, "ris", N_SERVMSG, msg);
-            forcements[itemnum] = ( 0 == strcmp("0" , args[2])  ) ? false : true;
         }
         return 0;
     }
@@ -236,13 +253,13 @@
     */
     void installservcmds()
     {
-        addservcmd("test", 0, true, srvcmd_test);
+        addservcmd("test", PRIV_NONE, true, srvcmd_test);
         addservcmdalias("test", "foo");
 
-        addservcmd("resetmods", 1, true, srvcmd_resetmodifications);
+        addservcmd("resetmods", PRIV_ADMIN, true, srvcmd_resetmodifications);
 
-        addservcmd("fcanspawnitem", 1, true, srvcmd_fcanspawnitem);
+        addservcmd("fcanspawnitem", PRIV_NONE, true, srvcmd_fcanspawnitem);
 
-        addservcmd("help", 0, true, srvcmd_help);
+        addservcmd("help", PRIV_NONE, true, srvcmd_help);
         addservcmdalias("help", "commands");
     }
