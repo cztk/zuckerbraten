@@ -96,10 +96,17 @@
         return -1;
     }
 
-
 //  ----------------
 //  functions
 //  ----------------
+
+    int resetmodifications(int cn, vector<char *> args)
+    {
+        forcements.setsize(0);
+
+        return 0;
+    }
+
 
     int test(int cn, vector<char *> args)
     {
@@ -179,6 +186,8 @@
     {
         addservcmd("#test", 0, true, test);
         addservcmdalias("#test", "#foo");
+
+        addservcmd("#resetmods", 1, true, resetmodifications);
 
         addservcmd("#fcanspawnitem", 1, true, fcanspawnitem);
     }
